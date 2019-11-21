@@ -1,0 +1,113 @@
+﻿---
+
+Tirer les révisions entrantes
+Sélectionner la branche de kiozen
+Mettre à jour le répertoire de travail, abandonner les changements locaux
+
+----
+Visual Studio
+ALL BUILD : Clean, puis Build
+
+////////////////////////////////////////////////////////////////////////////////
+
+\msvc_64\copyfiles.bat à remplacer ou modifier
+
+/////////////////////////////////////////////
+
+\msvc_64\QMapShack_Installer.nsi à remplacer ou modifier
+
+////////////////////////////////////////////////////////////////////////////////
+
+\src\gis\trk\cGisItemTrk.h, ligne 48 :
+//#define ASCEND_THRESHOLD       5
+#define ASCEND_THRESHOLD       2
+
+////////////////////////////////////////////////////////////////////////////////
+
+\src\gis\trk\filter\IFilterMedian.ui:
+Minimum = 3 au lieu de 5
+
+ligne78 :
+ <property name="minimum">
+        <number>3</number>
+       </property>
+			   
+////////////////////////////////////////////////////////////////////////////////			   
+
+		   
+
+\src\mouse\line\IMouseEditLine.cpp
+ligne 192 :
+    drawLine(pixelLine, Qt::white, 3, p);// 3 instead of 7
+ligne 207 :
+	    drawLine(pixelLine, Qt::magenta, 1, p);// 1 instead of 5
+ligne 218 :
+//    for(const QPointF &pt : pixelSubs) // remove black ellipses from path
+//   {
+//        p.drawEllipse(pt, 2, 2);
+//  }
+
+////////////////////////////////////////////////////////////////////////////////
+   
+\src\gis\gpx\serialization.cpp, ligne 444 :
+//gpx.setAttribute("creator","QMapShack " VER_STR " http://www.qlandkarte.org/");
+									gpx.setAttribute("creator","edge 305");
+
+									
+////////////////////////////////////////////////////////////////////////////////
+
+\src\map\CMapIMG.cpp, lignes 2054 et 2109 :
+
+2 fois pour enlever les points bleus superposés de openmtbmap :
+
+    //    if(isCluttered(rectPois, QRectF(pt.pos, size)))
+        //{
+            //if(size.width() <= 8 && size.height() <= 8)
+            //{
+                //p.drawImage(pt.pos.x() - (size.width()/2), pt.pos.y() - (size.height()/2), icon);
+            //}
+            //else
+            //{
+              //  p.drawPixmap(pt.pos.x() - 4, pt.pos.y() - 4, QPixmap(":/icons/8x8/bullet_blue.png"));
+//            }
+  //          continue;
+        //}
+		
+////////////////////////////////
+
+CLogProject.cpp et CSmlProject.cpp, line 213 :
+
+     throw tr("This LOG file does not contain any position data and can not be displayed by QMapShack: %1").arg(filename);
+                    //throw tr("This LOG file does not contain any position data and can not be displayed by QMapShack: %1").arg(filename);
+                    samplesList.first()["Latitude"] = 0;
+                    samplesList.first()["Longitude"] = 0;
+                    samplesList.last()["Latitude"] = 0;
+
+                    qreal duration =  samplesList.first().time.msecsTo(samplesList.last().time);
+                    samplesList.last()["Longitude"] = (duration / (1000.0 * 3600.0)) * 0.008983;
+
+
+/////
+
+measurements activity :
+
+ActMeasurements.svg
+16x16/ActMeasurements.png
+32x32/ActMeasurements.png
+48x48/ActMeasurements.png
+
+CTrackData.h, line 89 : 
+			,eAct20Train    = 1000
+-            ,eAct20MaxNum   = 1100       ///< limit to speed up for loops
++			,eAct20Measurements = 0x1100
++            ,eAct20MaxNum   = 1200       ///< limit to speed up for loops
+             ,eAct20Bad      = 0x7FFF
+
+CActivityTrk.cpp, line 62 :
++        	,DESCRIPTOR_ENTRY(tr("Measurements"),		"ActMeasurements.png", eAct20Measurements,    IGisItem::eColorMagenta)
+
+resources.qrc, line 572 : 
+       <file>icons/16x16/ActMeasurements.png</file>
++        <file>icons/32x32/ActMeasurements.png</file>
++        <file>icons/48x48/ActMeasurements.png</file>
+
