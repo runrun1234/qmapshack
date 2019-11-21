@@ -49,7 +49,7 @@ ligne 218 :
 
 ////////////////////////////////////////////////////////////////////////////////
    
-\src\gis\gpx\serialization.cpp, ligne 444 :
+\src\gis\gpx\serialization.cpp, ligne 469 :
 //gpx.setAttribute("creator","QMapShack " VER_STR " http://www.qlandkarte.org/");
 									gpx.setAttribute("creator","edge 305");
 
