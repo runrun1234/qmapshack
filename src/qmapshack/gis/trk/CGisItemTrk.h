@@ -52,7 +52,8 @@ class CPropertyTrk;
 class CFitStream;
 class CCanvas;
 
-#define ASCENT_THRESHOLD       5
+//#define ASCEND_THRESHOLD       5
+#define ASCEND_THRESHOLD       2
 #define MIN_WIDTH_INFO_BOX   300
 
 class CGisItemTrk : public IGisItem, public IGisLine

@@ -60,6 +60,7 @@ void CActivityTrk::init()
         , DESCRIPTOR_ENTRY(tr("Aeronautic"),         "ActAero.png",  eAct20Aero,     IGisItem::eColorLightGray)
         , DESCRIPTOR_ENTRY(tr("Ski/Winter"),         "ActSki.png",   eAct20Ski,      IGisItem::eColorDarkGray)
         , DESCRIPTOR_ENTRY(tr("Public Transport"),   "ActTrain.png", eAct20Train,    IGisItem::eColorRed)
+		, DESCRIPTOR_ENTRY(tr("Measurements"),		 "ActMeasurements.png", eAct20Measurements,    IGisItem::eColorMagenta)
     };
 
     SETTINGS;

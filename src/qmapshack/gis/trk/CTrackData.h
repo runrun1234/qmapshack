@@ -85,7 +85,9 @@ public:
             , eAct20Aero     = 800
             , eAct20Ski      = 900
             , eAct20Train    = 1000
-            , eAct20MaxNum   = 1100       ///< limit to speed up for loops
+ //           , eAct20MaxNum   = 1100       ///< limit to speed up for loops
+            , eAct20Measurements = 0x1100
+            , eAct20MaxNum   = 1200       ///< limit to speed up for loops
             , eAct20Bad      = 0x7FFF
         };
 
