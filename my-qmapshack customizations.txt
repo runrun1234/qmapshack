@@ -15,8 +15,8 @@ ALL BUILD : Clean, puis Build
 ///////// Seuil de calcul du dénivelé ///////////////////////////////////////////////////////////////////////
 
 \src\qmapshack\gis\trk\cGisItemTrk.h, ligne 55 :
-//#define ASCEND_THRESHOLD       5
-#define ASCEND_THRESHOLD       2
+//#define ASCENT_THRESHOLD       5
+#define ASCENT_THRESHOLD       2
 
 
 ///////// Filtre de lissage des altitudes: abaissement de la valeur mini à 3 (vient du GPSMAP64) ////////////
