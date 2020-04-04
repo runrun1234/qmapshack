@@ -1,5 +1,7 @@
 /**********************************************************************************************
     Copyright (C) 2014 Oliver Eichler oliver.eichler@gmx.de
+    Copyright (C) 2020 Henri Hornburg hrnbg@t-online.de
+
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,13 +19,13 @@
 **********************************************************************************************/
 
 #include "config.h"
+#include "gis/CGisWorkspace.h"
 #include "gis/db/CSetupWorkspace.h"
 #include "helpers/CSettings.h"
-
 #include <QtWidgets>
 
-CSetupWorkspace::CSetupWorkspace(QWidget *parent)
-    : QDialog(parent)
+CSetupWorkspace::CSetupWorkspace(CGisWorkspace * workspace, QWidget *parent)
+    : QDialog(parent), workspace(workspace)
 {
     setupUi(this);
 
@@ -35,6 +37,8 @@ CSetupWorkspace::CSetupWorkspace(QWidget *parent)
     linePort->setText(cfg.value("port", "34123").toString());
     checkDeviceSupport->setChecked(cfg.value("device support", true).toBool());
     cfg.endGroup();
+
+    checkShowTags->setChecked(!workspace->areTagsHidden());
 
     connect(checkSaveOnExit, &QCheckBox::toggled, spinSaveEvery, &QSpinBox::setEnabled);
 }
@@ -54,7 +58,9 @@ void CSetupWorkspace::accept()
     cfg.setValue("device support", checkDeviceSupport->isChecked());
     cfg.endGroup();
 
-    QMessageBox::information(this, tr("Setup database..."), tr("Changes will become active after an application's restart."), QMessageBox::Ok);
+    workspace->setTagsHidden(!checkShowTags->isChecked());
+
+    QMessageBox::information(this, tr("Setup database..."), tr("Changes to database settings will become active after an application's restart."), QMessageBox::Ok);
 
     QDialog::accept();
 }

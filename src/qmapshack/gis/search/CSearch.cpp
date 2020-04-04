@@ -385,6 +385,7 @@ QMap<QString, CSearch::search_type_e> CSearch::initKeywordSearchTypeMap()
     QMap<QString, search_type_e> map;
     map.insert(tr("with"), eSearchTypeWith);
     map.insert(tr("contains"), eSearchTypeWith);
+    map.insert(tr("contain"), eSearchTypeWith);
     map.insert(tr("containing"), eSearchTypeWith);
     map.insert(tr("without"), eSearchTypeWithout);
     map.insert(tr("shorter than"), eSearchTypeSmaller);
@@ -416,7 +417,8 @@ QMap<QString, QString> CSearch::initKeywordSearchExampleMap()
     QMap<QString, QString> map;
     map.insert(tr("with"), tr("example: attributes with dog"));
     map.insert(tr("contains"), tr("example: name contains bike"));
-    map.insert(tr("containing"), tr("example: name containin bike"));
+    map.insert(tr("contain"), tr("example: keywords contain bike"));
+    map.insert(tr("containing"), tr("example: name containing bike"));
     map.insert(tr("without"), tr("example: name without water"));
     map.insert(tr("shorter than"), tr("example: shorter than 5km"));
     map.insert(tr("smaller than"), tr("example: area smaller than 5m²"));
@@ -452,6 +454,8 @@ QMap<QString, searchProperty_e> CSearch::initSearchPropertyEnumMap()
     map.insert(tr("date"), eSearchPropertyGeneralDate);
     map.insert(tr("comment"), eSearchPropertyGeneralComment);
     map.insert(tr("description"), eSearchPropertyGeneralDescription);
+    map.insert(tr("rating"), eSearchPropertyGeneralRating);
+    map.insert(tr("keywords"), eSearchPropertyGeneralKeywords);
 
     //Area keywords
     map.insert(tr("area"), eSearchPropertyAreaArea);
@@ -467,6 +471,7 @@ QMap<QString, searchProperty_e> CSearch::initSearchPropertyEnumMap()
     map.insert(tr("size"), eSearchPropertyGeocacheSize);
     map.insert(tr("GCCode"), eSearchPropertyGeocacheGCCode);
     map.insert(tr("GCName"), eSearchPropertyGeocacheGCName);
+    map.insert(tr("status"), eSearchPropertyGeocacheStatus);
 
     //Waypoint keywords
 
@@ -503,6 +508,8 @@ QMap<searchProperty_e, QString> CSearch::initSearchPropertyMeaningMap()
     map.insert(eSearchPropertyGeneralDate, tr("searches the Date"));
     map.insert(eSearchPropertyGeneralComment, tr("searches the Comment"));
     map.insert(eSearchPropertyGeneralDescription, tr("searches the Description"));
+    map.insert(eSearchPropertyGeneralKeywords, tr("searches the Keywords"));
+    map.insert(eSearchPropertyGeneralRating, tr("compares the Rating"));
 
     //Area keywords
     map.insert(eSearchPropertyAreaArea, tr("searches the area"));
@@ -515,6 +522,7 @@ QMap<searchProperty_e, QString> CSearch::initSearchPropertyMeaningMap()
     map.insert(eSearchPropertyGeocacheSize, tr("searches the size of a geocache. (micro, small, regular, large)"));
     map.insert(eSearchPropertyGeocacheGCCode, tr("searches the GCCode of a geocache."));
     map.insert(eSearchPropertyGeocacheGCName, tr("searches the Name of a geocache."));
+    map.insert(eSearchPropertyGeocacheStatus, tr("searches the status of a geocache. (available, not available, archived)"));
 
     //Waypoint keywords
 

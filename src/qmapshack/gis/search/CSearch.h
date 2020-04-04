@@ -70,6 +70,8 @@ enum searchProperty_e: unsigned int
     eSearchPropertyGeneralDate,
     eSearchPropertyGeneralComment,
     eSearchPropertyGeneralDescription,
+    eSearchPropertyGeneralRating,
+    eSearchPropertyGeneralKeywords,
 
     //Area keywords
     eSearchPropertyAreaArea,
@@ -82,6 +84,7 @@ enum searchProperty_e: unsigned int
     eSearchPropertyGeocacheSize,
     eSearchPropertyGeocacheGCCode,
     eSearchPropertyGeocacheGCName,
+    eSearchPropertyGeocacheStatus,
 
     //Waypoint keywords
 

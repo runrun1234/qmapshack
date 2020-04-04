@@ -1,4 +1,6 @@
 V1.XX.X
+
+V1.14.1
 [QMS-37] Inconsistent use of time zones
 [QMS-43] Individual filter for each project
 [QMS-49] Add "elevation limit" to DEM to highlight elevation above the limit
@@ -6,6 +8,20 @@ V1.XX.X
 [QMS-59] Version information in window title does not contain VERSION_SUFFIX "development"
 [QMS-64] Cleanup code in IUnit and subclasses
 [QMS-73] Info of a geocache is not correctly shown in Copy Element Window
+[QMS-79] Possibility to 'star' Waypoints
+[QMS-80] Use ASAN to enhance code quality
+[QMS-83] Application Crash
+[QMS-89] Geo search hidden after restarting QMapShack
+[QMS-100] Avoid whitespaces in project name and keywords
+[QMS-108] Integrate Wiki Page as help dialog
+[QMS-109] Direct link to geocaching logging page
+[QMS-111] Geocaching logging page - only 1 server used
+[QMS-116] Filter edit field lost
+[QMS-118] Too much whitespace in extended search help window
+[QMS-119] Better handling of disabled and archived geocaches
+[QMS-125] Missing icon for not available geocache
+[QMS-126] Wrong results searching for geocache status
+[QMS-122] Windows: support for offline help
 
 V1.14.0
 [QMS-5] App crashes on using the "Change Start Point" filter

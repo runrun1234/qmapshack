@@ -33,6 +33,7 @@
 #include "helpers/CDraw.h"
 #include "helpers/CProgressDialog.h"
 #include "helpers/CSettings.h"
+#include "misc.h"
 
 #include <proj_api.h>
 #include <QtWidgets>
@@ -419,14 +420,6 @@ static void addRowLimit(QString& str, const QString& name, const QString& min, c
     str += "</tr>";
 }
 
-static bool sortByName(const QString& item1, const QString& item2)
-{
-    static QCollator collator;
-    // this will set collator to natural sorting mode (instead of lexical)
-    collator.setNumericMode(true);
-    return collator.compare(item1, item2) < 0;
-}
-
 
 QString CGisItemTrk::getInfoLimits() const
 {
@@ -435,7 +428,7 @@ QString CGisItemTrk::getInfoLimits() const
     str += "<tr><th align='left'></th><th align='right'>" + tr("min.") + "</th><th align='right'>" + tr("max.") + "</th></tr>";
 
     QStringList keys = extrema.keys();
-    qSort(keys.begin(), keys.end(), sortByName);
+    qSort(keys.begin(), keys.end(), sortByString);
 
     for(const QString& key : keys)
     {
@@ -629,6 +622,8 @@ QString CGisItemTrk::getInfo(quint32 feature) const
             }
         }
     }
+
+    str += getRatingKeywordInfo();
 
     return str + "</div>";
 }
@@ -3060,6 +3055,16 @@ QMap<searchProperty_e, CGisItemTrk::fSearch> CGisItemTrk::initKeywordLambdaMap()
     map.insert(eSearchPropertyGeneralDescription, [](CGisItemTrk* item){
         searchValue_t searchValue;
         searchValue.str1 = item->getDescription();
+        return searchValue;
+    });
+    map.insert(eSearchPropertyGeneralRating, [](CGisItemTrk* item){
+        searchValue_t searchValue;
+        searchValue.value1 = item->getRating();
+        return searchValue;
+    });
+    map.insert(eSearchPropertyGeneralKeywords, [](CGisItemTrk* item){
+        searchValue_t searchValue;
+        searchValue.str1 = QStringList(item->getKeywords().toList()).join(", ");
         return searchValue;
     });
     //Route / track keywords

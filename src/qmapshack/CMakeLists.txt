@@ -23,7 +23,7 @@ add_definitions(-DROUTINO_XML_PATH=${ROUTINO_XML_PATH})
 ###############################################################################################
 
 set( SRCS    
-    CAbout.cpp
+    CAbout.cpp    
     CMainWindow.cpp
     CSingleInstanceProxy.cpp
     GeoMath.cpp
@@ -48,10 +48,11 @@ set( SRCS
     device/IDeviceWatcher.cpp
     gis/CGisDatabase.cpp
     gis/CGisDraw.cpp
+    gis/CGisItemRate.cpp
     gis/CGisListDB.cpp
     gis/CGisListWks.cpp
     gis/CGisWorkspace.cpp
-    gis/CSelDevices.cpp    
+    gis/CSelDevices.cpp
     gis/IGisItem.cpp
     gis/IGisLine.cpp
     gis/db/CDBFolderGroup.cpp
@@ -333,6 +334,10 @@ set( SRCS
     widgets/CTextEditWidget.cpp
     widgets/CTextEditWidgetSelMenu.cpp
     widgets/CTinySpinBox.cpp
+    ../common/help/CHelp.cpp
+    ../common/help/CHelpBrowser.cpp
+    ../common/help/CHelpIndex.cpp
+    ../common/help/CHelpSearch.cpp
 )
 
 
@@ -385,6 +390,7 @@ set( HDRS
     device/IDeviceWatcher.h
     gis/CGisDatabase.h
     gis/CGisDraw.h
+    gis/CGisItemRate.h
     gis/CGisListDB.h
     gis/CGisListWks.h
     gis/CGisWorkspace.h
@@ -677,6 +683,10 @@ set( HDRS
     widgets/CTextEditWidget.h
     widgets/CTextEditWidgetSelMenu.h
     widgets/CTinySpinBox.h
+    ../common/help/CHelp.h
+    ../common/help/CHelpBrowser.h
+    ../common/help/CHelpIndex.h
+    ../common/help/CHelpSearch.h
 )
 
 
@@ -711,6 +721,7 @@ set( UIS
     dem/IDemPathSetup.ui
     dem/IDemPropSetup.ui
     gis/IGisDatabase.ui
+    gis/IGisItemRate.ui
     gis/IGisWorkspace.ui
     gis/ISelDevices.ui
     gis/db/IExportDatabase.ui
@@ -861,6 +872,7 @@ set(MAININP
 )
 
 include_directories(
+    ../common
     SYSTEM # this prevents warnings from non-QMS headers
     ${CMAKE_BINARY_DIR}
     ${GDAL_INCLUDE_DIRS}
@@ -905,6 +917,7 @@ target_link_libraries(${APPLICATION_NAME}
     Qt5::WebEngineWidgets
     Qt5::Qml
     Qt5::Positioning
+    Qt5::Help
     ${DBUS_LIB}
     ${GDAL_LIBRARIES}
     ${PROJ4_LIBRARIES}

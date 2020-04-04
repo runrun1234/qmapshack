@@ -91,12 +91,23 @@
      <property name="indentation">
       <number>14</number>
      </property>
+     <property name="columnCount">
+      <number>3</number>
+     </property>
+     <attribute name="headerMinimumSectionSize">
+      <number>50</number>
+     </attribute>
      <attribute name="headerDefaultSectionSize">
-      <number>100</number>
+      <number>50</number>
      </attribute>
      <column>
       <property name="text">
        <string notr="true"/>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Rating</string>
       </property>
      </column>
      <column>

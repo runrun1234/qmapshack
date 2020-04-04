@@ -18,8 +18,10 @@
 
 #include "CAbout.h"
 #include "CMainWindow.h"
+#include "help/CHelp.h"
 #include "helpers/CSettings.h"
 #include "setup/CSetupExtTools.h"
+#include "setup/IAppSetup.h"
 #include "tool/CToolAddOverview.h"
 #include "tool/CToolBox.h"
 #include "tool/CToolCutMap.h"
@@ -37,7 +39,7 @@ CMainWindow * CMainWindow::pSelf = nullptr;
 CMainWindow::CMainWindow()
 {
     SETTINGS;
-    IUnit::setUnitType((IUnit::type_e)cfg.value("Units/units",IUnit::eTypeMetric).toInt(), this);
+    IUnit::setUnitType((IUnit::type_e)cfg.value("Units/units", IUnit::eTypeMetric).toInt(), this);
     IUnit::setCoordFormat((IUnit::coord_format_e)cfg.value("Units/coordFormat", IUnit::eCoordFormat1).toInt());
 
     pSelf = this;
@@ -50,6 +52,7 @@ CMainWindow::CMainWindow()
     connect(actionSetupExtTools, &QAction::triggered, this, &CMainWindow::slotSetupExtTools);
     connect(actionSetupUnits, &QAction::triggered, this, &CMainWindow::slotSetupUnits);
     connect(actionSetupCoordFormat, &QAction::triggered, this, &CMainWindow::slotSetupCoordFormat);
+    connect(actionHelp, &QAction::triggered, this, &CMainWindow::slotHelp);
     connect(&IAppSetup::self(), &IAppSetup::sigSetupChanged, this, &CMainWindow::slotSetupChanged);
 
     menuWindow->addAction(dockTools->toggleViewAction());
@@ -93,7 +96,7 @@ CMainWindow::CMainWindow()
     }
     // end ---- restore window geometry -----
     //toolStack->setCurrentIndex(cfg.value("Tool/Stack/current",0).toInt());
-    toolBox->setCurrentIndex(cfg.value("Tool/Box/current",0).toInt());
+    toolBox->setCurrentIndex(cfg.value("Tool/Box/current", 0).toInt());
     actionShowToolHelp->setChecked(cfg.value("Tool/showHelp", true).toBool());
     mapFont = cfg.value("Canvas/mapFont", font()).value<QFont>();
     actionFlipMouseWheel->setChecked(cfg.value("Canvas/flipMouseWheel", false).toBool());
@@ -179,4 +182,19 @@ void CMainWindow::slotSetupCoordFormat()
 void CMainWindow::slotSetupChanged()
 {
     toolStack->setupChanged();
+}
+
+void CMainWindow::slotHelp()
+{
+    if(help.isNull())
+    {
+        help = new CHelp(
+            IAppSetup::self().helpFile(),
+            "qthelp://qmt/doc/doc/html/QMapTool/QMTDocMain.html",
+            this
+            );
+        addDockWidget(Qt::AllDockWidgetAreas, help);
+    }
+
+    help->setVisible(true);
 }

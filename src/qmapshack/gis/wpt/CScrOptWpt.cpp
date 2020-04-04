@@ -55,6 +55,7 @@ CScrOptWpt::CScrOptWpt(CGisItemWpt *wpt, const QPoint& point, IMouse *parent)
     show();
 
     connect(toolDelete,           &QToolButton::clicked, this, &CScrOptWpt::slotDelete);
+    connect(toolTags,             &QToolButton::clicked, this, &CScrOptWpt::slotTags);
     connect(toolEdit,             &QToolButton::clicked, this, &CScrOptWpt::slotEdit);
     connect(toolCopy,             &QToolButton::clicked, this, &CScrOptWpt::slotCopy);
     connect(toolCoordToClipboard, &QToolButton::clicked, this, &CScrOptWpt::slotCoordToClipboard);
@@ -149,9 +150,7 @@ void CScrOptWpt::slotEditRadius()
 void CScrOptWpt::slotAddElevation()
 {
     CScrOptSemaphoreLocker lock(*this);
-    QList<IGisItem::key_t> keys;
-    keys << key;
-    CGisWorkspace::self().addEleToWptTrkByKey(keys);
+    CGisWorkspace::self().addEleToWptTrkByKey({key});
     close();
 }
 
@@ -159,6 +158,13 @@ void CScrOptWpt::slotSearchWeb()
 {
     CScrOptSemaphoreLocker lock(*this);
     CGisWorkspace::self().searchWebByKey(key);
+    close();
+}
+
+void CScrOptWpt::slotTags()
+{
+    CScrOptSemaphoreLocker lock(*this);
+    CGisWorkspace::self().tagItemsByKey({key});
     close();
 }
 

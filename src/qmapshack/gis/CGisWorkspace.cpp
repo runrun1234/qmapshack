@@ -23,6 +23,7 @@
 #include "device/IDevice.h"
 #include "gis/CGisDatabase.h"
 #include "gis/CGisDraw.h"
+#include "gis/CGisItemRate.h"
 #include "gis/CGisWorkspace.h"
 #include "gis/db/CDBProject.h"
 #include "gis/db/CSelectDBFolder.h"
@@ -63,6 +64,18 @@ CGisWorkspace::CGisWorkspace(QMenu *menuProject, QWidget *parent)
 
     SETTINGS;
     treeWks->header()->restoreState(cfg.value("Workspace/treeWks/state", treeWks->header()->saveState()).toByteArray());
+
+    tags_hidden_e tagsHidden = (tags_hidden_e)cfg.value("Workspace/treeWks/tagsHidden", eTagsHiddenUnknown).toInt();
+    // Limit the column width to half the table width to avoid the name column to be pushed out the window.
+    if(tagsHidden == eTagsHiddenUnknown || treeWks->columnWidth(CGisListWks::eColumnRating) > 0.4 * this->width())
+    {
+        treeWks->setColumnWidth(CGisListWks::eColumnRating, 0.2 * this->width());
+    }
+
+    //Only show tags if they are explcitely not hidden
+    setTagsHidden(tagsHidden != eTagsHiddenFalse);
+
+
     CSearch::setSearchMode(CSearch::search_mode_e(cfg.value("Workspace/projects/filterMode", CSearch::getSearchMode()).toInt()));
     CSearch::setCaseSensitivity(Qt::CaseSensitivity(cfg.value("Workspace/projects/CaseSensitivity", CSearch::getCaseSensitivity()).toInt()));
 
@@ -72,16 +85,17 @@ CGisWorkspace::CGisWorkspace(QMenu *menuProject, QWidget *parent)
     connect(treeWks, &CGisListWks::itemPressed, this, &CGisWorkspace::slotWksItemPressed);
     connect(treeWks, &CGisListWks::itemSelectionChanged, this, &CGisWorkspace::slotWksItemSelectionChanged);
     connect(treeWks, &CGisListWks::sigItemDeleted, this, &CGisWorkspace::slotWksItemSelectionChanged);
-
-    // [Issue #265] Delay the loading of the workspace to make sure the complete IUnit system
-    //              is up and running.
-    QTimer::singleShot(1000, treeWks, SLOT(slotLoadWorkspace()));
 }
 
 CGisWorkspace::~CGisWorkspace()
 {
     SETTINGS;
+    //To ensure backwards compatibility first it is saved wether the tags are hidden,
+    //then the column is made visible and then the header is saved. This way the name column is in no case hidden.
+    cfg.setValue("Workspace/treeWks/tagsHidden", areTagsHidden() ? eTagsHiddenTrue : eTagsHiddenFalse);
+    setTagsHidden(false);
     cfg.setValue("Workspace/treeWks/state", treeWks->header()->saveState());
+
     cfg.setValue("Workspace/projects/filterMode", CSearch::getSearchMode());
     cfg.setValue("Workspace/projects/CaseSensitivity", CSearch::getCaseSensitivity());
     /*
@@ -90,6 +104,13 @@ CGisWorkspace::~CGisWorkspace()
 
      */
     delete treeWks;
+}
+
+void CGisWorkspace::slotLateInit()
+{
+    // [Issue #265] Delay the loading of the workspace to make sure the complete IUnit system
+    //              is up and running.
+    QTimer::singleShot(1000, treeWks, SLOT(slotLoadWorkspace()));
 }
 
 void CGisWorkspace::setOpacity(qreal val)
@@ -1340,4 +1361,58 @@ bool CGisWorkspace::findPolylineCloseBy(const QPointF& pt1, const QPointF& pt2, 
     }
 
     return !polyline.isEmpty();
+}
+
+bool CGisWorkspace::areTagsHidden() const
+{
+    return treeWks->isColumnHidden(CGisListWks::eColumnRating);
+}
+
+void CGisWorkspace::setTagsHidden(bool hidden)
+{
+    treeWks->setColumnHidden(CGisListWks::eColumnRating, hidden);
+}
+
+void CGisWorkspace::tagItemsByKey(const QList<IGisItem::key_t>& keys)
+{
+    QSet<QString> commonKeywords;
+
+    QList<IGisItem*> items;
+    bool firstItem = true;
+    qreal rating = 0;
+    for(const IGisItem::key_t& key : keys)
+    {
+        IGisItem * gisItem = getItemByKey(key);
+        if(gisItem != nullptr)
+        {
+            if(firstItem)
+            {
+                commonKeywords = gisItem->getKeywords();
+                rating = gisItem->getRating();
+                firstItem=false;
+            }
+            else
+            {
+                commonKeywords = commonKeywords.intersect(gisItem->getKeywords());
+            }
+
+            items << gisItem;
+        }
+    }
+
+    CGisItemRate dlg (this, commonKeywords, items.size() > 1 ? 0 : rating);
+    dlg.exec();
+
+    if(dlg.result() == QDialog::Accepted)
+    {
+        for(IGisItem * gisItem : items)
+        {
+            if(dlg.getRatingChanged())
+            {
+                gisItem->setRating(dlg.getRating());
+            }
+            gisItem->removeKeywords(dlg.getRemovedKeywords());
+            gisItem->addKeywords(dlg.getAddedKeywords());
+        }
+    }
 }

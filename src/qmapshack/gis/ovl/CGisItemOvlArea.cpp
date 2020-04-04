@@ -439,6 +439,8 @@ QString CGisItemOvlArea::getInfo(quint32 feature) const
         }
     }
 
+    str += getRatingKeywordInfo();
+
     return str + "</div>";
 }
 
@@ -590,6 +592,17 @@ QMap<searchProperty_e, CGisItemOvlArea::fSearch> CGisItemOvlArea::initKeywordLam
         searchValue.str1 = item->getDescription();
         return searchValue;
     });
+    map.insert(eSearchPropertyGeneralRating, [](CGisItemOvlArea* item){
+        searchValue_t searchValue;
+        searchValue.value1 = item->getRating();
+        return searchValue;
+    });
+    map.insert(eSearchPropertyGeneralKeywords, [](CGisItemOvlArea* item){
+        searchValue_t searchValue;
+        searchValue.str1 = QStringList(item->getKeywords().toList()).join(", ");
+        return searchValue;
+    });
+    //Area specific
     map.insert(eSearchPropertyAreaArea, [](CGisItemOvlArea* item){
         searchValue_t searchValue;
         searchValue.value1 = item->area.area;

@@ -430,10 +430,16 @@ public:
 
     bool findPolylineCloseBy(const QPointF& pt1, const QPointF& pt2, qint32 threshold, QPolygonF& polyline);
 
+    bool areTagsHidden() const;
+    void setTagsHidden(bool hidden);
+
+    void tagItemsByKey(const QList<IGisItem::key_t>& keys);
+
 signals:
     void sigChanged();
 
 public slots:
+    void slotLateInit();
     void slotSaveAll();
     void slotWksItemSelectionReset();
     void slotActivityTrkByKey(const QList<IGisItem::key_t>& keys, trkact_t act);
@@ -457,6 +463,14 @@ private:
         the mouse object to find items close by for highlight.
      */
     IGisItem::key_t keyWksSelection;
+
+
+    enum tags_hidden_e
+    {
+        eTagsHiddenTrue,
+        eTagsHiddenFalse,
+        eTagsHiddenUnknown
+    };
 };
 
 #endif //CGISWORKSPACE_H

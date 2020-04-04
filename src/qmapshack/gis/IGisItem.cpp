@@ -1,5 +1,6 @@
 /**********************************************************************************************
     Copyright (C) 2014 Oliver Eichler oliver.eichler@gmx.de
+    Copyright (C) 2020 Henri Hornburg hrnbg@t-online.de
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,6 +33,7 @@
 #include "GeoMath.h"
 #include "helpers/CDraw.h"
 #include "helpers/CSettings.h"
+#include "misc.h"
 #include "units/IUnit.h"
 
 #include <QtSql>
@@ -378,6 +380,25 @@ void IGisItem::updateDecoration(quint32 enable, quint32 disable)
     }
     setText(CGisListWks::eColumnDecoration, str);
     setToolTip(CGisListWks::eColumnDecoration, tt);
+
+    //Set Info column
+    if(!keywords.isEmpty())
+    {
+        QTreeWidgetItem::setIcon(CGisListWks::eColumnRating, QPixmap("://icons/32x32/Tag.png"));
+        setToolTip(CGisListWks::eColumnRating, QStringList(getKeywordsSorted()).join(", "));
+    }
+    else
+    {
+        QTreeWidgetItem::setIcon(CGisListWks::eColumnRating, QIcon());
+    }
+    if(rating > 0)
+    {
+        QTreeWidgetItem::setText(CGisListWks::eColumnRating, QString::number(rating));
+    }
+    else
+    {
+        QTreeWidgetItem::setText(CGisListWks::eColumnRating, "");
+    }
 }
 
 
@@ -1036,4 +1057,55 @@ IGisItem * IGisItem::newGisItem(quint32 type, quint64 id, QSqlDatabase& db, IGis
     }
 
     return item;
+}
+
+qreal IGisItem::getRating() const
+{
+    return rating;
+}
+
+void IGisItem::setRating(qreal rating)
+{
+    this->rating=rating;
+    updateHistory();
+}
+
+const QSet<QString> &IGisItem::getKeywords() const
+{
+    return keywords;
+}
+
+QList<QString> IGisItem::getKeywordsSorted() const
+{
+    QList<QString> sortedKeywords = keywords.toList();
+    std::sort(sortedKeywords.begin(), sortedKeywords.end(), sortByString);
+    return sortedKeywords;
+}
+
+void IGisItem::addKeywords(const QSet<QString> &otherKeywords)
+{
+    keywords.unite(otherKeywords);
+    updateHistory();
+}
+
+void IGisItem::removeKeywords(const QSet<QString> &otherKeywords)
+{
+    keywords.subtract(otherKeywords);
+    updateHistory();
+}
+
+const QString IGisItem::getRatingKeywordInfo() const
+{
+    QString str = "";
+    if(getRating() > 0)
+    {
+        str += "<br/>\n";
+        str += tr("Rating: ") + QString::number(getRating());
+    }
+    if(!getKeywordsSorted().isEmpty())
+    {
+        str += "<br/>\n";
+        str += tr("Keywords: ") + QStringList(getKeywordsSorted()).join(", ");
+    }
+    return str;
 }

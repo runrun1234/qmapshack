@@ -23,6 +23,7 @@
 #include "ui_IMainWindow.h"
 #include <QDir>
 #include <QMainWindow>
+#include <QPointer>
 
 class CMapList;
 class CDemList;
@@ -36,6 +37,7 @@ class CToolBarConfig;
 class CGeoSearchWeb;
 struct SGisLine;
 class CWptIconManager;
+class CHelp;
 
 class CMainWindow : public QMainWindow, private Ui::IMainWindow
 {
@@ -157,7 +159,7 @@ protected:
 
 private slots:
     void slotAbout();
-    void slotHelp();
+    void slotWiki();
     void slotQuickstart();
     void slotAddCanvas();
     void slotCloneCanvas();
@@ -197,6 +199,8 @@ private slots:
     void slotGeoSearchConfigChanged();
     void slotDockFloating(bool floating);
     void slotRenameView();
+    void slotHelp();
+
 private:
     friend int main(int argc, char ** argv);
     CMainWindow();
@@ -246,6 +250,8 @@ private:
     bool menuVisible = false;
 
     static QMutex mutex;
+
+    QPointer<CHelp> help;
 };
 
 #endif //CMAINWINDOW_H

@@ -418,7 +418,15 @@ QString CGisItemWpt::getInfo(quint32 feature) const
                 str += QString("<a href='%1'>%2</a>").arg(link.uri.toString()).arg(link.text);
             }
         }
+        //Add logging link seperately, since the link to the geocache site is extracted from the gpx file.
+        if(geocache.hasData && geocache.service == eGcCom)
+        {
+            str += " <a href='https://www.geocaching.com/play/geocache/" + wpt.name + "/log'>Log Geocache</a>";
+        }
     }
+
+
+    str += getRatingKeywordInfo();
 
     return str + "</div>";
 }
@@ -460,7 +468,14 @@ void CGisItemWpt::setIcon()
 {
     if(geocache.hasData)
     {
-        IGisItem::setIcon(CWptIconManager::self().getWptIconByName(geocache.type, focus));
+        if(geocache.available)
+        {
+            IGisItem::setIcon(CWptIconManager::self().getWptIconByName(geocache.type, focus));
+        }
+        else
+        {
+            IGisItem::setIcon(CWptIconManager::self().getWptIconByName("gray_"+geocache.type, focus));
+        }
     }
     else
     {
@@ -1263,6 +1278,16 @@ QMap<searchProperty_e, CGisItemWpt::fSearch> CGisItemWpt::initKeywordLambdaMap()
         searchValue.str1 = item->getDescription();
         return searchValue;
     });
+    map.insert(eSearchPropertyGeneralRating, [](CGisItemWpt* item){
+        searchValue_t searchValue;
+        searchValue.value1 = item->getRating();
+        return searchValue;
+    });
+    map.insert(eSearchPropertyGeneralKeywords, [](CGisItemWpt* item){
+        searchValue_t searchValue;
+        searchValue.str1 = QStringList(item->getKeywords().toList()).join(", ");
+        return searchValue;
+    });
     //Geocache keywords
     map.insert(eSearchPropertyGeocacheDifficulty, [](CGisItemWpt* item){
         searchValue_t searchValue;
@@ -1319,6 +1344,28 @@ QMap<searchProperty_e, CGisItemWpt::fSearch> CGisItemWpt::initKeywordLambdaMap()
     map.insert(eSearchPropertyGeocacheGCName, [](CGisItemWpt* item){
         searchValue_t searchValue;
         searchValue.str1 = item->geocache.name;
+        return searchValue;
+    });
+    map.insert(eSearchPropertyGeocacheStatus, [](CGisItemWpt* item){
+        searchValue_t searchValue;
+        if(!item->geocache.hasData)
+        {
+            return searchValue;
+        }
+
+        if(item->geocache.archived)
+        {
+            searchValue.str1 = tr("archived");
+        }
+        else if(item->geocache.available)
+        {
+            searchValue.str1 = tr("available");
+        }
+        else
+        {
+            searchValue.str1 = tr("not available");
+        }
+
         return searchValue;
     });
     return map;

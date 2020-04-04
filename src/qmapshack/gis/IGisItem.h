@@ -1,5 +1,6 @@
 /**********************************************************************************************
     Copyright (C) 2014 Oliver Eichler oliver.eichler@gmx.de
+    Copyright (C) 2020 Henri Hornburg hrnbg@t-online.de
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -592,6 +593,14 @@ public:
 
     virtual const searchValue_t getValueByKeyword(searchProperty_e keyword) = 0;
 
+    qreal getRating() const;
+    void setRating(qreal rating);
+    const QSet<QString>& getKeywords() const;
+    QList<QString> getKeywordsSorted() const;
+    void addKeywords(const QSet<QString> &otherKeywords);
+    void removeKeywords(const QSet<QString> &otherKeywords);
+    const QString getRatingKeywordInfo() const;
+
 protected:
     /// set icon of QTreeWidgetItem
     virtual void setSymbol() = 0;
@@ -654,6 +663,10 @@ protected:
     };
 
     static QVector<color_t> colorMap;
+
+    /// labeling the GisItems
+    qreal rating = 0;
+    QSet<QString> keywords;
 private:
     void showIcon();
 };

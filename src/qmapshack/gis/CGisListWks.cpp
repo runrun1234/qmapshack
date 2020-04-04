@@ -113,6 +113,7 @@ CGisListWks::CGisListWks(QWidget *parent)
     actionGroupSort->setExclusive(true);
     actionSortByTime    = addSortAction(this, actionGroupSort, "://icons/32x32/Time.png", tr("Sort by Time"), IGisProject::eSortFolderTime);
     actionSortByName    = addSortAction(this, actionGroupSort, "://icons/32x32/SortName.png", tr("Sort by Name"), IGisProject::eSortFolderName);
+    actionSortByRating  = addSortAction(this, actionGroupSort, "://icons/32x32/Tag.png", tr("Sort by Rating"), IGisProject::eSortFolderRating);
     actionFilterProject = addAction(QIcon("://icons/32x32/Filter.png"), tr("Filter Project"), this, SLOT(slotAddProjectFilter()));
     actionFilterProject->setCheckable(true);
     actionAutoSave      = addAction(QIcon("://icons/32x32/AutoSave.png"), tr("Autom. Save"), this, SLOT(slotAutoSaveProject(bool)));
@@ -132,6 +133,7 @@ CGisListWks::CGisListWks(QWidget *parent)
 
     // common to all items actions
     actionEditDetails   = addAction(QIcon("://icons/32x32/EditDetails.png"), tr("Edit..."), this, SLOT(slotEditItem()));
+    actionTagItem       = addAction(QIcon("://icons/32x32/Tag.png"), tr("Set Tags"), this, SLOT(slotTagItem()));
     actionCopyItem      = addAction(QIcon("://icons/32x32/Copy.png"), tr("Copy to..."), this, SLOT(slotCopyItem()));
     actionDelete        = addAction(QIcon("://icons/32x32/DeleteOne.png"), tr("Delete"), this, SLOT(slotDeleteItem()));
 
@@ -997,6 +999,7 @@ void CGisListWks::showMenuProjectWks(const QPoint& p)
     menu.addSeparator();
     menu.addAction(actionSortByTime);
     menu.addAction(actionSortByName);
+    menu.addAction(actionSortByRating);
     menu.addAction(actionFilterProject);
     menu.addSeparator();
     menu.addAction(actionAutoSave);
@@ -1042,6 +1045,7 @@ void CGisListWks::showMenuItemTrk(const QPoint &p, const IGisItem::key_t& key)
 
     QMenu menu(this);
     menu.addAction(actionEditDetails);
+    menu.addAction(actionTagItem);
     menu.addAction(actionCopyItem);
     menu.addSeparator();
     menu.addAction(actionFocusTrk);
@@ -1065,6 +1069,7 @@ void CGisListWks::showMenuItemWpt(const QPoint &p, CGisItemWpt * wpt)
 
     QMenu menu(this);
     menu.addAction(actionEditDetails);
+    menu.addAction(actionTagItem);
     menu.addAction(actionCopyItem);
     menu.addSeparator();
     menu.addAction(actionBubbleWpt);
@@ -1089,6 +1094,7 @@ void CGisListWks::showMenuItemRte(const QPoint &p)
 
     QMenu menu(this);
     menu.addAction(actionEditDetails);
+    menu.addAction(actionTagItem);
     menu.addAction(actionCopyItem);
     menu.addSeparator();
     menu.addAction(actionFocusRte);
@@ -1109,6 +1115,7 @@ void CGisListWks::showMenuItemOvl(const QPoint &p)
 
     QMenu menu(this);
     menu.addAction(actionEditDetails);
+    menu.addAction(actionTagItem);
     menu.addAction(actionCopyItem);
     menu.addSeparator();
     menu.addAction(actionEditArea);
@@ -1124,6 +1131,7 @@ void CGisListWks::showMenuItem(const QPoint &p, const QList<IGisItem::key_t>& ke
     QAction * action;
 
     QMenu menu(this);
+    menu.addAction(actionTagItem);
     menu.addAction(actionCopyItem);
     menu.addSection(tr("Waypoints"));
     menu.addAction(actionRteFromWpt);
@@ -1270,6 +1278,10 @@ void CGisListWks::slotContextMenu(const QPoint& point)
 
                     case IGisProject::eSortFolderTime:
                         actionSortByTime->setChecked(true);
+                        break;
+
+                    case IGisProject::eSortFolderRating:
+                        actionSortByRating->setChecked(true);
                         break;
                     }
 
@@ -1603,22 +1615,16 @@ void CGisListWks::slotEditItem()
     }
 }
 
+void CGisListWks::slotTagItem()
+{
+    CGisListWksEditLock lock(false, IGisItem::mutexItems);
+    CGisWorkspace::self().tagItemsByKey(selectedItems2Keys<IGisItem>());
+}
+
 void CGisListWks::slotDeleteItem()
 {
     CGisListWksEditLock lock(false, IGisItem::mutexItems);
-
-    QList<QTreeWidgetItem*> items       = selectedItems();
-    QList<IGisItem::key_t>  keys;
-    for(QTreeWidgetItem * item : items)
-    {
-        IGisItem * gisItem = dynamic_cast<IGisItem*>(item);
-        if(gisItem != nullptr)
-        {
-            keys << gisItem->getKey();
-        }
-    }
-
-    CGisWorkspace::self().delItemsByKey(keys);
+    CGisWorkspace::self().delItemsByKey(selectedItems2Keys<IGisItem>());
 }
 
 void CGisListWks::slotCopyItem()
@@ -1634,18 +1640,7 @@ void CGisListWks::slotCopyItem()
      * later used to retrieve the item on the workspace via CGisWorkspace::getItemByKey()
      * again. This is always safe.
      */
-    QList<QTreeWidgetItem*> items = selectedItems();
-    QList<IGisItem::key_t>  keys;
-    for(QTreeWidgetItem * item : items)
-    {
-        IGisItem * gisItem = dynamic_cast<IGisItem*>(item);
-        if(gisItem != nullptr)
-        {
-            keys << gisItem->getKey();
-        }
-    }
-
-    CGisWorkspace::self().copyItemsByKey(keys);
+    CGisWorkspace::self().copyItemsByKey(selectedItems2Keys<IGisItem>());
 }
 
 void CGisListWks::slotProjWpt()
@@ -1761,16 +1756,7 @@ void CGisListWks::slotCombineTrk()
 {
     CGisListWksEditLock lock(false, IGisItem::mutexItems);
 
-    QList<IGisItem::key_t>  keys;
-    QList<QTreeWidgetItem*> items = selectedItems();
-    for(QTreeWidgetItem * item : items)
-    {
-        CGisItemTrk * gisItem = dynamic_cast<CGisItemTrk*>(item);
-        if(gisItem)
-        {
-            keys << gisItem->getKey();
-        }
-    }
+    const QList<IGisItem::key_t>& keys = selectedItems2Keys<CGisItemTrk>();
 
     if(!keys.isEmpty())
     {
@@ -2276,15 +2262,7 @@ void CGisListWks::slotRteFromWpt()
 {
     CGisListWksEditLock lock(false, IGisItem::mutexItems);
 
-    QList<IGisItem::key_t> keys;
-    for(QTreeWidgetItem * item : selectedItems())
-    {
-        CGisItemWpt * wpt = dynamic_cast<CGisItemWpt*>(item);
-        if(nullptr != wpt)
-        {
-            keys << wpt->getKey();
-        }
-    }
+    const QList<IGisItem::key_t>& keys = selectedItems2Keys<CGisItemWpt>();
 
     if(!keys.isEmpty())
     {
@@ -2296,15 +2274,7 @@ void CGisListWks::slotEditPrxWpt()
 {
     CGisListWksEditLock lock(false, IGisItem::mutexItems);
 
-    QList<IGisItem::key_t> keys;
-    for(QTreeWidgetItem * item : selectedItems())
-    {
-        CGisItemWpt * wpt = dynamic_cast<CGisItemWpt*>(item);
-        if(nullptr != wpt)
-        {
-            keys << wpt->getKey();
-        }
-    }
+    const QList<IGisItem::key_t>& keys = selectedItems2Keys<CGisItemWpt>();
 
     if(!keys.isEmpty())
     {
@@ -2382,35 +2352,11 @@ void CGisListWks::slotSymWpt()
     {
         return;
     }
-
-    QList<IGisItem::key_t> keys;
-    for(QTreeWidgetItem * item : selectedItems())
-    {
-        CGisItemWpt * wpt = dynamic_cast<CGisItemWpt*>(item);
-        if(wpt == nullptr)
-        {
-            continue;
-        }
-
-        keys << wpt->getKey();
-    }
-
-    CGisWorkspace::self().changeWptSymByKey(keys, iconName);
+    CGisWorkspace::self().changeWptSymByKey(selectedItems2Keys<CGisItemWpt>(), iconName);
 }
 
 void CGisListWks::slotEleWptTrk()
 {
-    QList<IGisItem::key_t> keys;
-    for(QTreeWidgetItem * item : selectedItems())
-    {
-        IGisItem * gisItem = dynamic_cast<IGisItem*>(item);
-        if(gisItem != nullptr)
-        {
-            keys << gisItem->getKey();
-            continue;
-        }
-    }
-
-    CGisWorkspace::self().addEleToWptTrkByKey(keys);
+    CGisWorkspace::self().addEleToWptTrkByKey(selectedItems2Keys<IGisItem>());
 }
 

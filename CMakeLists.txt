@@ -40,12 +40,11 @@ endif(((EXISTS ${DEBIAN_RELEASE_INFO}) AND (${YEAR} LESS ${EXPIRE_YEAR})) OR APP
 # Define project name and version tags
 ###############################################################################################
 # this is not only the QMS version it will be the package version, too.
-project(QMapShack VERSION 1.14.0)
+project(QMapShack VERSION 1.14.1)
 
 # FOR A RELEASE:
 # remove "development" for a release
-set(VERSION_SUFFIX "development")
-# !!! Do not forget to update versions in the sub-repos, too!!!
+set(VERSION_SUFFIX "")
 
 
 ###############################################################################################
@@ -129,6 +128,16 @@ endif(MSVC)
 if(UNIX)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -lstdc++ -lm")
     add_definitions(-Wall -Wpedantic -Wno-switch -Wno-strict-aliasing)
+
+    # Use ASAN for development versions
+    if(NOT ${VERSION_SUFFIX} STREQUAL "")
+        check_cxx_compiler_flag("-fsanitize=address" WITH_ASAN)
+        if(NOT ${WITH_ASAN})
+            message(FATAL_ERROR "Could not find ASAN! Please install ASAN if you want to compile development versions." )
+        endif(NOT ${WITH_ASAN})
+        message(STATUS "Using ASAN")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fno-omit-frame-pointer")
+    endif(NOT ${VERSION_SUFFIX} STREQUAL "")
 endif(UNIX)
 
 
@@ -156,6 +165,7 @@ find_package(Qt5UiTools             REQUIRED)
 find_package(Qt5Network             REQUIRED)
 find_package(Qt5WebEngineWidgets    REQUIRED)
 find_package(Qt5Qml                 REQUIRED)
+find_package(Qt5Help                REQUIRED)
 find_package(GDAL                   REQUIRED)
 find_package(PROJ4                  REQUIRED)
 find_package(JPEG                   REQUIRED)
@@ -193,7 +203,7 @@ if(NOT ALGLIB_FOUND AND BUILD_QMAPSHACK)
     add_subdirectory(3rdparty/alglib)
 endif(NOT ALGLIB_FOUND AND BUILD_QMAPSHACK)
 
-add_definitions(-DACCEPT_USE_OF_DEPRECATED_PROJ_API_H)
+add_definitions(-DACCEPT_USE_OF_DEPRECATED_PROJ_API_H -DHELPPATH=${HTML_INSTALL_DIR})
 
 ###############################################################################################
 # Create global config.h
@@ -229,6 +239,8 @@ if(BUILD_QMAPSHACK)
     install( FILES        src/icons/48x48/QMapShack.png     DESTINATION     ${DATA_INSTALL_PREFIX}/pixmaps )    
     install( DIRECTORY    src/icons/qmapshack/hicolor       DESTINATION     ${ICON_INSTALL_DIR} )
     install( FILES        qmapshack.1                       DESTINATION     ${MAN_INSTALL_DIR}/man1  )
+    install( FILES        src/qmapshack/doc/QMSHelp.qhc     DESTINATION     ${HTML_INSTALL_DIR})
+    install( FILES        src/qmapshack/doc/QMSHelp.qch     DESTINATION     ${HTML_INSTALL_DIR})
 endif(BUILD_QMAPSHACK)
 
 if(BUILD_QMAPTOOL)
@@ -237,6 +249,8 @@ if(BUILD_QMAPTOOL)
     install( FILES        qmaptool.1                        DESTINATION     ${MAN_INSTALL_DIR}/man1  )
     install( FILES        qmt_map2jnx.1                     DESTINATION     ${MAN_INSTALL_DIR}/man1  )
     install( FILES        qmt_rgb2pct.1                     DESTINATION     ${MAN_INSTALL_DIR}/man1  )
+    install( FILES        src/qmaptool/doc/QMTHelp.qhc     DESTINATION     ${HTML_INSTALL_DIR})
+    install( FILES        src/qmaptool/doc/QMTHelp.qch     DESTINATION     ${HTML_INSTALL_DIR})
 endif(BUILD_QMAPTOOL)
 endif (UNIX AND NOT WIN32 AND NOT APPLE)
 

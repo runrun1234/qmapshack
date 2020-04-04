@@ -1,5 +1,7 @@
 /**********************************************************************************************
     Copyright (C) 2014 Oliver Eichler oliver.eichler@gmx.de
+    Copyright (C) 2020 Henri Hornburg hrnbg@t-online.de
+
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,16 +24,20 @@
 #include "ui_ISetupWorkspace.h"
 #include <QDialog>
 
+class CGisWorkspace;
 
 class CSetupWorkspace : public QDialog, private Ui::ISetupWorkspace
 {
     Q_OBJECT
 public:
-    CSetupWorkspace(QWidget * parent);
+    CSetupWorkspace(CGisWorkspace *workspace, QWidget * parent);
     virtual ~CSetupWorkspace();
 
 public slots:
     void accept() override;
+
+private:
+    CGisWorkspace * workspace;
 };
 
 #endif //CSETUPWORKSPACE_H

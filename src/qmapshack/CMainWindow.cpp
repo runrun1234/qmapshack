@@ -37,6 +37,7 @@
 #include "gis/trk/CDetailsTrk.h"
 #include "gis/trk/CKnownExtension.h"
 #include "gis/wpt/CGisItemWpt.h"
+#include "help/CHelp.h"
 #include "helpers/CProgressDialog.h"
 #include "helpers/CSettings.h"
 #include "helpers/CToolBarConfig.h"
@@ -173,6 +174,7 @@ CMainWindow::CMainWindow()
     // end ---- restore window geometry -----
 
     connect(actionAbout,                 &QAction::triggered,            this,      &CMainWindow::slotAbout);
+    connect(actionWiki,                  &QAction::triggered,            this,      &CMainWindow::slotWiki);
     connect(actionHelp,                  &QAction::triggered,            this,      &CMainWindow::slotHelp);
     connect(actionQuickstart,            &QAction::triggered,            this,      &CMainWindow::slotQuickstart);
     connect(actionAddMapView,            &QAction::triggered,            this,      &CMainWindow::slotAddCanvas);
@@ -395,6 +397,7 @@ CMainWindow::CMainWindow()
                      << actionSetupDEMPaths
                      << actionAbout
                      << actionHelp
+                     << actionWiki
                      << actionSetupMapView
                      << actionLoadGISData
                      << actionSaveGISData
@@ -476,6 +479,7 @@ CMainWindow::CMainWindow()
         }
     }
 
+    QTimer::singleShot(100, widgetGisWorkspace, SLOT(slotLateInit()));
 
     QTimer::singleShot(100, this, SLOT(slotSanityTest()));
 }
@@ -926,7 +930,7 @@ void CMainWindow::slotAbout()
     dlg.exec();
 }
 
-void CMainWindow::slotHelp()
+void CMainWindow::slotWiki()
 {
     QDesktopServices::openUrl(QUrl("https://github.com/Maproom/qmapshack/wiki/DocMain"));
 }
@@ -1284,7 +1288,7 @@ void CMainWindow::slotSetupUnits()
 
 void CMainWindow::slotSetupWorkspace()
 {
-    CSetupWorkspace dlg(this);
+    CSetupWorkspace dlg(widgetGisWorkspace, this);
     dlg.exec();
 }
 
@@ -1454,7 +1458,7 @@ void CMainWindow::slotLinkActivated(const QString& link)
     }
     else if(link == "ShowWiki")
     {
-        slotHelp();
+        slotWiki();
     }
     else if(link == "ShowQuickStart")
     {
@@ -1840,3 +1844,17 @@ void CMainWindow::slotSanityTest()
     qDebug() << "Sanity test passed.";
 }
 
+void CMainWindow::slotHelp()
+{
+    if(help.isNull())
+    {
+        help = new CHelp(
+            IAppSetup::getPlatformInstance()->helpFile(),
+            "qthelp://qms/doc/doc/html/DocMain.html",
+            this
+            );
+        addDockWidget(Qt::AllDockWidgetAreas, help);
+    }
+
+    help->setVisible(true);
+}
