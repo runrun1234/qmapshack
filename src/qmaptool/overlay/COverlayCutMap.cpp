@@ -23,7 +23,9 @@
 #include "overlay/COverlayCutMap.h"
 
 #include <functional>
+#include <QPainterPath>
 #include <QtWidgets>
+
 using std::bind;
 
 static inline qreal sqr(qreal a)

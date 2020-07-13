@@ -20,7 +20,7 @@ set QMSI_MSQL_PATH="C:\Users\Christouf\Applications\buildQMS\mariadb-10.1.11-win
 rem uncomment the following line if you want OpenSSL
 set QMSI_OSSL_PATH="C:\Users\Christouf\Applications\buildQMS\openSSL"
 rem And finally of course the path to your build directory!
-set QMSI_BUILD_PATH="..\..\..\gitMyQmapShackBuilt\"
+set QMSI_BUILD_PATH="..\..\..\GitHubMyQmapShackBuilt\"
 
 rem Section 2.) Copy Files
 del /s/q Files
