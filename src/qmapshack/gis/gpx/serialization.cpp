@@ -466,7 +466,8 @@ QDomNode IGisProject::writeMetadata(QDomDocument& doc, bool strictGpx11)
     doc.appendChild(gpx);
 
     gpx.setAttribute("version", "1.1");
-    gpx.setAttribute("creator", "QMapShack " VER_STR " http://www.qlandkarte.org/");
+  //gpx.setAttribute("creator","QMapShack " VER_STR " http://www.qlandkarte.org/");
+	    gpx.setAttribute("creator","edge 305");
     gpx.setAttribute("xmlns",        gpx_ns);
     gpx.setAttribute("xmlns:xsi",    xsi_ns);
 

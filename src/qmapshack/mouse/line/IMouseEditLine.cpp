@@ -208,7 +208,7 @@ void IMouseEditLine::draw(QPainter& p, CCanvas::redraw_e needsRedraw, const QRec
 
     lineOp->drawBg(p);
 
-    drawLine(pixelLine, Qt::white, 7, p);
+    drawLine(pixelLine, Qt::white, 3, p);// 3 instead of 7
 
     // draw magenta arrows (with white background)
     p.setBrush(Qt::magenta);
@@ -223,7 +223,7 @@ void IMouseEditLine::draw(QPainter& p, CCanvas::redraw_e needsRedraw, const QRec
         p.drawRect(r1);
     }
 
-    drawLine(pixelLine, Qt::magenta, 5, p);
+    drawLine(pixelLine, Qt::magenta, 1, p);// 1 instead of 5
 
     p.setPen(Qt::NoPen);
     p.setBrush(Qt::black);
@@ -234,10 +234,10 @@ void IMouseEditLine::draw(QPainter& p, CCanvas::redraw_e needsRedraw, const QRec
         p.drawRect(r2);
     }
 
-    for(const QPointF &pt : pixelSubs)
-    {
-        p.drawEllipse(pt, 2, 2);
-    }
+//  for(const QPointF &pt : pixelSubs)// remove black ellipses from path
+//  {
+//      p.drawEllipse(pt, 2, 2);
+//  }
 
     QRect r3(0, 0, 9, 9);
     p.setBrush(Qt::NoBrush);

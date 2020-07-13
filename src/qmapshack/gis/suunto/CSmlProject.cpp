@@ -242,7 +242,13 @@ void CSmlProject::loadSml(const QString &filename, CSmlProject *project)
 
                 if (!sampleWithPositionFound)
                 {
-                    throw tr("This SML file does not contain any position data and can not be displayed by QMapShack: %1").arg(filename);
+                    //throw tr("This SML file does not contain any position data and can not be displayed by QMapShack: %1").arg(filename);
+					samplesList.first()["Latitude"] = 0;
+                    samplesList.first()["Longitude"] = 0;
+                    samplesList.last()["Latitude"] = 0;
+
+                    qreal duration =  samplesList.first().time.msecsTo(samplesList.last().time);
+                    samplesList.last()["Longitude"] = (duration / (1000.0 * 3600.0)) * 0.008983;
                 }
 
                 fillTrackPointsFromSamples(samplesList, lapsList, trk, extensions);

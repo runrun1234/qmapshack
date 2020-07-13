@@ -23,7 +23,6 @@
 ;  Note: the command line parameter "--style fusion" for qmapshack.exe switches to a GUI appearance which is perceived as less antique than the default
 ;  See https://doc.qt.io/qt-5/qstyle.html https://doc.qt.io/qt-5/qstylefactory.html https://forum.qt.io/topic/23978/qfusionstyle https://forum.qt.io/topic/23978/qfusionstyle)
 ; 08-Apr-2019 Adapt to use of PROJ4 version 6.0
-; 27-Sep-2019 Adapt start menue links from bitbucket to github
 
 ;=================== BEGIN SCRIPT ====================
 ; Include for nice Setup UI, see http://nsis.sourceforge.net/Docs/Modern%20UI%202/Readme.html
@@ -98,8 +97,8 @@ Var StartMenuFolder
 Section "MSVC++ 2017 Runtime" MSVC
 
   SetOutPath $INSTDIR
-  File Files\VC_redist.x64.exe
-  ExecWait '"$INSTDIR\VC_redist.x64.exe"'
+  File Files\vcredist_x64.exe
+  ExecWait '"$INSTDIR\vcredist_x64.exe"'
   Delete "$INSTDIR\VC_redist.x64.exe"
   
 SectionEnd
@@ -129,7 +128,8 @@ Section "QMapShack" QMapShack
 
   ;BEGIN Qt Files
   SetOutPath $INSTDIR
-    File Files\Qt5Core.dll
+    File Files\Qt5DBus.dll
+	File Files\Qt5Core.dll
     File Files\Qt5Gui.dll
     File Files\Qt5Help.dll
     File Files\Qt5Multimedia.dll
@@ -197,7 +197,7 @@ Section "QMapShack" QMapShack
 
   ;BEGIN PROJ.4 Files    
   SetOutPath $INSTDIR
-    File Files\proj_6_2.dll
+    File Files\proj_6_0.dll
     File Files\proj.exe
     File Files\projinfo.exe
     File Files\cct.exe
@@ -281,8 +281,8 @@ Section "StartMenue" StartMenue
     CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
     CreateShortCut "$SMPROGRAMS\$StartMenuFolder\QMapShack.lnk" "$INSTDIR\qmapshack.exe" "--style fusion" "$INSTDIR\QMapShack.ico"
     CreateShortCut "$SMPROGRAMS\$StartMenuFolder\QMapTool.lnk" "$INSTDIR\qmaptool.exe" "--style fusion" "$INSTDIR\QMapTool.ico"
-    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\qmapshack.org.lnk" "https://github.com/Maproom/qmapshack/wiki" "" "$INSTDIR\kfm_home.ico"
-    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Help.lnk" "https://github.com/Maproom/qmapshack/wiki/DocMain" "" "$INSTDIR\Help.ico"
+    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\qmapshack.org.lnk" "https://bitbucket.org/maproom/qmapshack/wiki/Home" "" "$INSTDIR\kfm_home.ico"
+    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Help.lnk" "https://bitbucket.org/maproom/qmapshack/wiki/DocMain" "" "$INSTDIR\Help.ico"
     CreateShortCut "$SMPROGRAMS\$StartMenuFolder\gdal.org.lnk" "http://www.gdal.org/" "" "$INSTDIR\gdalicon.ico"
     CreateShortCut "$SMPROGRAMS\$StartMenuFolder\GDAL shell.lnk" %COMSPEC% "/k $\"$INSTDIR\gdal_shell.bat$\"" "" "" "" "" "GDAL shell"
    !insertmacro MUI_STARTMENU_WRITE_END
