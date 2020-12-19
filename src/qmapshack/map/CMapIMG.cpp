@@ -2053,19 +2053,19 @@ void CMapIMG::drawPoints(QPainter& p, pointtype_t& pts, QVector<QRectF>& rectPoi
         const QImage&  icon = CMainWindow::self().isNight() ? pointProperties[pt->type].imgNight : pointProperties[pt->type].imgDay;
         const QSizeF&  size = icon.size();
 
-        if(isCluttered(rectPois, QRectF(pt->pos, size)))
-        {
-            if(size.width() <= 8 && size.height() <= 8)
-            {
-                p.drawImage(pt->pos.x() - (size.width() / 2), pt->pos.y() - (size.height() / 2), icon);
-            }
-            else
-            {
-                p.drawPixmap(pt->pos.x() - 4, pt->pos.y() - 4, QPixmap(":/icons/8x8/bullet_blue.png"));
-            }
-            ++pt;
-            continue;
-        }
+ //     if(isCluttered(rectPois, QRectF(pt->pos, size)))
+ //		{
+            //if(size.width() <= 8 && size.height() <= 8)
+            //{
+                //p.drawImage(pt->pos.x() - (size.width() / 2), pt->pos.y() - (size.height() / 2), icon);
+            //}
+            //else
+            //{
+                //p.drawPixmap(pt->pos.x() - 4, pt->pos.y() - 4, QPixmap(":/icons/8x8/bullet_blue.png"));
+            //}
+            //++pt;
+            //continue;
+        //}
 
         bool showLabel = true;
 
@@ -2108,18 +2108,18 @@ void CMapIMG::drawPois(QPainter& p, pointtype_t& pts, QVector<QRectF> &rectPois)
         const QImage&  icon = CMainWindow::self().isNight() ? pointProperties[pt.type].imgNight : pointProperties[pt.type].imgDay;
         const QSizeF&  size = icon.size();
 
-        if(isCluttered(rectPois, QRectF(pt.pos, size)))
-        {
-            if(size.width() <= 8 && size.height() <= 8)
-            {
-                p.drawImage(pt.pos.x() - (size.width() / 2), pt.pos.y() - (size.height() / 2), icon);
-            }
-            else
-            {
-                p.drawPixmap(pt.pos.x() - 4, pt.pos.y() - 4, QPixmap(":/icons/8x8/bullet_blue.png"));
-            }
-            continue;
-        }
+        //if(isCluttered(rectPois, QRectF(pt.pos, size)))
+        //{
+          //  if(size.width() <= 8 && size.height() <= 8)
+//            {
+                //p.drawImage(pt.pos.x() - (size.width() / 2), pt.pos.y() - (size.height() / 2), icon);
+            //}
+            //else
+            //{
+                //p.drawPixmap(pt.pos.x() - 4, pt.pos.y() - 4, QPixmap(":/icons/8x8/bullet_blue.png"));
+            //}
+            //continue;
+        //}
 
         labelType = CGarminTyp::eStandard;
         if(pointProperties.contains(pt.type))
