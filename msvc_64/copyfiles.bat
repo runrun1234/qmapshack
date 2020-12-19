@@ -3,24 +3,24 @@ rem Please adapt environment variables in section 1) to your system
 
 
 rem Section 1.) Define path to Qt, MSVC, .... installations
-set QMSI_QT_PATH="C:\Qt\5.12.1\msvc2017_64"
+set QMSI_QT_PATH="C:\Qt\5.12.10\msvc2017_64"
 rem get the VC redistributable installer from https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads
-set QMSI_VCREDIST_PATH="C:\Users\Christouf\Applications\buildQMS\downloads"
-set QMSI_GDAL_PATH="C:\Users\Christouf\Applications\buildQMS\GDAL\gdal-2.3.1Built"
-set QMSI_PROJ_PATH="C:\Users\Christouf\Applications\buildQMS\PROJ4v6\built files"
-set QMSI_ROUT_PATH="C:\Users\Christouf\Applications\buildQMS\ROUTINO\Routino Rev 1897\routino_pkg"
-set QMSI_QUAZIP_PATH="C:\Users\Christouf\Applications\buildQMS\quazip-0.7.3\monQuazipBuild"
-set QMSI_ZLIB_PATH="C:\Users\Christouf\Applications\buildQMS\zlib\zlib-1.2.11Built"
-set QMSI_CURL_PATH="C:\Users\Christouf\Applications\buildQMS\curl\curl-7.61.1Built"
-set QMSI_SQLI_PATH="C:\Users\Christouf\Applications\buildQMS\sqlite3"
+set QMSI_VCREDIST_PATH="M:\deploy_2017"
+set QMSI_GDAL_PATH="M:\lib2017\gdal"
+set QMSI_PROJ_PATH="M:\lib2017\PROJ6"
+set QMSI_ROUT_PATH="M:\src\routino_pkg"
+set QMSI_QUAZIP_PATH="M:\lib2017\quazip"
+set QMSI_ZLIB_PATH="M:\lib2017\zlib"
+set QMSI_CURL_PATH="M:\lib2017\cURL"
+set QMSI_SQLI_PATH="M:\lib2017\sqlite"
 rem runtime libraries from mingw/msys - in my installation originally at C:\msys\opt\windows_64\bin
-set QMSI_MGW6_PATH="C:\Users\Christouf\Applications\buildQMS\MSYS\msys\opt\windows_64\bin"
+set QMSI_MGW6_PATH="M:\lib2017\mingw64"
 rem runtime libraries from mysql/mariadb - see 3rdparty.txt from where to get - could this be optional?
-set QMSI_MSQL_PATH="C:\Users\Christouf\Applications\buildQMS\mariadb-10.1.11-winx64\lib"
+set QMSI_MSQL_PATH="M:\lib2017\mysql"
 rem uncomment the following line if you want OpenSSL
-set QMSI_OSSL_PATH="C:\Users\Christouf\Applications\buildQMS\openSSL"
+set QMSI_OSSL_PATH="M:\deploy_2017"
 rem And finally of course the path to your build directory!
-set QMSI_BUILD_PATH="..\..\..\GitHubMyQmapShackBuilt\"
+set QMSI_BUILD_PATH="..\..\build\"
 
 rem Section 2.) Copy Files
 del /s/q Files
@@ -29,7 +29,7 @@ cd Files
 
 rem Section 2.1) Copy Qt files
 rem Note: Qt5WebEngine deployment is super crazy - see https://doc.qt.io/qt-5.12/qtwebengine-deploying.html
-copy %QMSI_QT_PATH%\bin\Qt5DBus.dll
+copy %QMSI_QT_PATH%\bin\assistant.exe
 copy %QMSI_QT_PATH%\bin\Qt5Core.dll
 copy %QMSI_QT_PATH%\bin\Qt5Gui.dll
 copy %QMSI_QT_PATH%\bin\Qt5Help.dll
@@ -40,6 +40,7 @@ copy %QMSI_QT_PATH%\bin\Qt5OpenGL.dll
 copy %QMSI_QT_PATH%\bin\Qt5Positioning.dll
 copy %QMSI_QT_PATH%\bin\Qt5PrintSupport.dll
 copy %QMSI_QT_PATH%\bin\Qt5Qml.dll
+copy %QMSI_QT_PATH%\bin\Qt5QmlModels.dll
 copy %QMSI_QT_PATH%\bin\Qt5Quick.dll
 copy %QMSI_QT_PATH%\bin\Qt5QuickWidgets.dll
 copy %QMSI_QT_PATH%\bin\Qt5Sensors.dll
@@ -66,7 +67,7 @@ cd ..
 mkdir sqldrivers
 cd sqldrivers
 copy %QMSI_QT_PATH%\plugins\sqldrivers\qsqlite.dll
-copy %QMSI_QT_PATH%\plugins\sqldrivers\qsqlmysql.dll
+rem copy %QMSI_QT_PATH%\plugins\sqldrivers\qsqlmysql.dll
 copy %QMSI_QT_PATH%\plugins\sqldrivers\qsqlodbc.dll
 copy %QMSI_QT_PATH%\plugins\sqldrivers\qsqlpsql.dll
 cd ..
@@ -99,7 +100,7 @@ copy %QMSI_GDAL_PATH%\bin\*.dll
 copy %QMSI_GDAL_PATH%\bin\*.exe
 rem section 2.2.4) PROJ.4
 xcopy %QMSI_PROJ_PATH%\share share /s /i
-copy %QMSI_PROJ_PATH%\bin\proj_6_0.dll
+copy %QMSI_PROJ_PATH%\bin\proj_6_3.dll
 copy %QMSI_PROJ_PATH%\bin\proj.exe
 copy %QMSI_PROJ_PATH%\bin\projinfo.exe
 copy %QMSI_PROJ_PATH%\bin\cct.exe
@@ -127,13 +128,13 @@ copy %QMSI_SQLI_PATH%\sqldiff.exe
 copy %QMSI_SQLI_PATH%\sqlite3.exe
 copy %QMSI_SQLI_PATH%\sqlite3_analyzer.exe
 rem uncomment the following line if you want OpenSSL
-copy %QMSI_OSSL_PATH%\libeay32.dll
-copy %QMSI_OSSL_PATH%\ssleay32.dll
+copy %QMSI_OSSL_PATH%\libcrypto-1_1-x64.dll
+copy %QMSI_OSSL_PATH%\libssl-1_1-x64.dll
 copy %QMSI_OSSL_PATH%\openssl.exe
 
 
 rem section 2.3) Copy MSVC Redist Files
-copy %QMSI_VCREDIST_PATH%\vcredist_x64.exe
+copy %QMSI_VCREDIST_PATH%\VC_redist.x64.exe
 
 rem section 2.4) Copy QMapShack Files
 copy %QMSI_BUILD_PATH%\bin\Release\qmapshack.exe
@@ -153,11 +154,11 @@ copy ..\..\..\src\qmaptool\doc\QMTHelp.* HTML
 cd ..
 
 
-rem section 2.5) 3rd party SW description
+rem section 2.5) 3rd party SW description and LICENSE
 copy ..\3rdparty.txt
+copy ..\..\LICENSE 1LICENSE.txt
 
 rem section 2.6) qt.conf
 copy ..\qt.conf
 
 pause
-

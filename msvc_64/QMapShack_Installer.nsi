@@ -23,6 +23,7 @@
 ;  Note: the command line parameter "--style fusion" for qmapshack.exe switches to a GUI appearance which is perceived as less antique than the default
 ;  See https://doc.qt.io/qt-5/qstyle.html https://doc.qt.io/qt-5/qstylefactory.html https://forum.qt.io/topic/23978/qfusionstyle https://forum.qt.io/topic/23978/qfusionstyle)
 ; 08-Apr-2019 Adapt to use of PROJ4 version 6.0
+; 27-Sep-2019 Adapt start menue links from bitbucket to github
 
 ;=================== BEGIN SCRIPT ====================
 ; Include for nice Setup UI, see http://nsis.sourceforge.net/Docs/Modern%20UI%202/Readme.html
@@ -97,8 +98,8 @@ Var StartMenuFolder
 Section "MSVC++ 2017 Runtime" MSVC
 
   SetOutPath $INSTDIR
-  File Files\vcredist_x64.exe
-  ExecWait '"$INSTDIR\vcredist_x64.exe"'
+  File Files\VC_redist.x64.exe
+  ExecWait '"$INSTDIR\VC_redist.x64.exe"'
   Delete "$INSTDIR\VC_redist.x64.exe"
   
 SectionEnd
@@ -122,14 +123,20 @@ Section "QMapShack" QMapShack
     File Files\translations\qmapshack_*.qm
     File Files\translations\qmaptool_*.qm
   SetOutPath "$INSTDIR\doc\HTML"
-    File Files\doc\HTML\QMSHelp.*
-    File Files\doc\HTML\QMTHelp.*
+    File Files\doc\HTML\QMSHelp.qch
+    File Files\doc\HTML\QMSHelp.qhc
+    File Files\doc\HTML\QMTHelp.qch
+    File Files\doc\HTML\QMTHelp.qhc
+SetOutPath "$INSTDIR\doc\HTML\.QMSHelp"
+    File Files\doc\HTML\.QMSHelp\fts
+SetOutPath "$INSTDIR\doc\HTML\.QMTHelp"
+    File Files\doc\HTML\.QMTHelp\fts
   ;END QMapShack Files
 
   ;BEGIN Qt Files
   SetOutPath $INSTDIR
-    File Files\Qt5DBus.dll
-	File Files\Qt5Core.dll
+    File Files\assistant.exe
+    File Files\Qt5Core.dll
     File Files\Qt5Gui.dll
     File Files\Qt5Help.dll
     File Files\Qt5Multimedia.dll
@@ -164,7 +171,7 @@ Section "QMapShack" QMapShack
 
   SetOutPath "$INSTDIR\sqldrivers\"
     File Files\sqldrivers\qsqlite.dll
-    File Files\sqldrivers\qsqlmysql.dll
+    ;File Files\sqldrivers\qsqlmysql.dll
     File Files\sqldrivers\qsqlodbc.dll
     File Files\sqldrivers\qsqlpsql.dll
 
@@ -197,7 +204,7 @@ Section "QMapShack" QMapShack
 
   ;BEGIN PROJ.4 Files    
   SetOutPath $INSTDIR
-    File Files\proj_6_0.dll
+    File Files\proj_6_3.dll
     File Files\proj.exe
     File Files\projinfo.exe
     File Files\cct.exe
@@ -247,12 +254,13 @@ Section "QMapShack" QMapShack
     File Files\libmysql.dll  
     File Files\3rdparty.txt
     File Files\qt.conf
+    File Files\1LICENSE.txt
   ;END additional Files
 
   ;BEGIN OpenSSL Files
-    ;File Files\libeay32.dll
-    ;File Files\ssleay32.dll
-    ;File Files\openssl.exe
+    File Files\libcrypto-1_1-x64.dll
+    File Files\libssl-1_1-x64.dll
+    File Files\openssl.exe
   ;END OpenSSL Files
 
 
@@ -278,14 +286,13 @@ Section "StartMenue" StartMenue
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     ;Create shortcuts
     CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
-    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
+    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\qmapshack.org.lnk" "https://github.com/Maproom/qmapshack/wiki" "" "$INSTDIR\kfm_home.ico"
     CreateShortCut "$SMPROGRAMS\$StartMenuFolder\QMapShack.lnk" "$INSTDIR\qmapshack.exe" "--style fusion" "$INSTDIR\QMapShack.ico"
     CreateShortCut "$SMPROGRAMS\$StartMenuFolder\QMapTool.lnk" "$INSTDIR\qmaptool.exe" "--style fusion" "$INSTDIR\QMapTool.ico"
-    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\qmapshack.org.lnk" "https://bitbucket.org/maproom/qmapshack/wiki/Home" "" "$INSTDIR\kfm_home.ico"
-    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Help.lnk" "https://bitbucket.org/maproom/qmapshack/wiki/DocMain" "" "$INSTDIR\Help.ico"
-    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\gdal.org.lnk" "http://www.gdal.org/" "" "$INSTDIR\gdalicon.ico"
     CreateShortCut "$SMPROGRAMS\$StartMenuFolder\GDAL shell.lnk" %COMSPEC% "/k $\"$INSTDIR\gdal_shell.bat$\"" "" "" "" "" "GDAL shell"
-   !insertmacro MUI_STARTMENU_WRITE_END
+    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
+
+    !insertmacro MUI_STARTMENU_WRITE_END
 
   ;Create registry entries
   WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\QMapShack" "DisplayName" "QMapShack (remove only)"
@@ -318,13 +325,13 @@ Section "Uninstall"
 
   !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
 
-  Delete "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk"
-  Delete "$SMPROGRAMS\$StartMenuFolder\QMapShack.lnk"
-  Delete "$SMPROGRAMS\$StartMenuFolder\QMapTool.lnk"
   Delete "$SMPROGRAMS\$StartMenuFolder\qmapshack.org.lnk"
-  Delete "$SMPROGRAMS\$StartMenuFolder\Help.lnk"
-  Delete "$SMPROGRAMS\$StartMenuFolder\gdal.org.lnk"
+  Delete "$SMPROGRAMS\$StartMenuFolder\QMapShack.lnk"
+  Delete "$SMPROGRAMS\$StartMenuFolder\QMapShack Help.lnk"
+  Delete "$SMPROGRAMS\$StartMenuFolder\QMapTool.lnk"
+  Delete "$SMPROGRAMS\$StartMenuFolder\QMapTool Help.lnk"
   Delete "$SMPROGRAMS\$StartMenuFolder\GDAL shell.lnk"
+  Delete "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk"
   
   RMDir "$SMPROGRAMS\$StartMenuFolder"
 
